@@ -124,13 +124,13 @@ export class MainCustomizeChartsComponent implements OnInit{
   }
 
   getRam(){
-      this.http.get(`/api/v1/get_table_rows/eosio/eosio/rammarket/10`)
-          .subscribe((res: any) => {
-                          this.countRamPrice(res);
-                      },
-                      (error) => {
-                          console.error(error);
-                      });
+      //this.http.get(`/api/v1/get_table_rows/eosio/eosio/rammarket/10`)
+          //.subscribe((res: any) => {
+                          //this.countRamPrice(res);
+                     // },
+                      //(error) => {
+                       //   console.error(error);
+                      //});
   }
 
   countRamPrice(res){

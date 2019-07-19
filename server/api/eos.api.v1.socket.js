@@ -240,7 +240,7 @@ module.exports = (io, mongoMain, metrics) => {
   getTPS();
   getProducersTable();
   //getHistory();
-  getRam();
+  //getRam();
 
   // === end function export 
 }

@@ -11,15 +11,10 @@
     <input type="search" placeholder="Search by block, tx, account, address" [(ngModel)]="search" (keyup)="onKey($event)">
   </div>
   <ul class="pull-right main-nav-middle">
-    <li *ngIf="!frontConfig?.customBalance"><button mat-button color="basic" routerLink="wallet" [ngClass]="{'nav-active': activeMenu() === '/wallet'}" class="mobile-no">wallet</button></li>
-    <li *ngIf="!frontConfig?.customBalance"><button mat-button color="basic" routerLink="vote" [ngClass]="{'nav-active': activeMenu() === '/vote'}" class="mobile-no">vote</button></li>
-    <li *ngIf="!frontConfig?.customBalance"><button mat-button color="basic" routerLink="analytics" [ngClass]="{'nav-active': activeMenu() === '/analytics'}">Analytics</button></li>
-    <li *ngIf="!frontConfig?.customBalance"><button mat-button color="basic" routerLink="ram" [ngClass]="{'nav-active': activeMenu()  === '/ram'}">Ram</button></li>
-    <li><button mat-button color="basic" routerLink="producers" [ngClass]="{'nav-active': activeMenu()  === '/producers'}">Producers</button></li>
     <li class="select-network" *ngIf="!frontConfig?.disableNets">
         <button mat-button [matMenuTriggerFor]="menu">{{netName}} <i class="fas fa-sort-down"></i></button>
         <mat-menu #menu="matMenu">
-          <a *ngFor="let net of networks;" href="{{net?.url}}" mat-menu-item>{{net.name}}</a>
+          <a *ngFor="let net of networks;" href="{{net?.url}}" mat-menu-item>MVLchain</a>
         </mat-menu>
     </li>
     <li>
@@ -36,12 +31,13 @@
 
 <footer>
   <div class="container">
-  <div class="pull-left">Copyright © 2018 EOSweb <span *ngIf="!frontConfig?.disableVoteDonation">Donation - <a routerLink="/account/{{frontConfig?.voteDonationAcc}}" class="color-green"><strong>{{frontConfig?.voteDonationAcc}}</strong></a></span></div>
+  <div class="pull-left">Copyright © 2019. MVL</div>
   <ul class="pull-right">
-       <li *ngFor="let elem of env.frontConfig.social;">
-          <a [href]="elem.link" target="_blank"><i class="fab {{elem.icon}}" *ngIf="elem.link"></i></a>
-      </li>
-      <li><a href="mailto:dev.eosweb.net@gmail.com">Support</a></li>
+      <li><a href="mailto:support@mvlchain.io">Support</a></li>
+      <li><a href="https://github.com/mvlchaindev" target="_blank"><i class="fab fa-github"></i></a></li>
+      <li><a href="https://fb.me/mvlchain" target="_blank"><i class="fab fa-facebook"></i></a></li>
+      <li><a href="https://twitter.com/mvlchain" target="_blank"><i class="fab fa-twitter"></i></a></li>
+      <li><a href="https://t.me/mvlchain_en" target="_blank"><i class="fab fa-telegram-plane"></i></a></li>
   </ul>
    </div>
 </footer>

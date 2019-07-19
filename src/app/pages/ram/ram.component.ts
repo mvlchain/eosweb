@@ -131,7 +131,7 @@ export class RamPageComponent implements OnInit{
   
   ngOnInit() {
      this.getGlobal();
-     this.scatterService.getRam();
+     //this.scatterService.getRam();
      this.getChart(this.dateFrom);
 
      if (this.loginEOSService.accountName){
