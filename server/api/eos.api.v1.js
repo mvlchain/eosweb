@@ -4,7 +4,6 @@
 
 const async = require('async');
 const path = require('path');
-const Bluebird = require('bluebird');
 const customFunctions = require('./eos.api.v1.custom');
 const MongoDatabase = require('../database/db.mongo.connect');
 
@@ -25,30 +24,48 @@ module.exports 	= (router, config, request, log, mongoMain, MARIA) => {
 	 */
 
 	router.post('/api/v1/search', (req, res) => {
-		let text = req.body.text;
+        let text = req.body.text;
+        
 		if (!text){
 			return res.status(501).send('Wrong search input!');
-		}
+        }
+        console.log("test : " + req.body.text);
 
 		async.parallel({
 			block: (cb) =>{
-        		global.eos.getBlock({ block_num_or_id: text })
-	   			 	.then(result => {
-	   			 		cb(null, result);
-	   			 	})
-	   			 	.catch(err => {
-	   			 		log.error(err);
-	   			 		cb(null, null);
-	   			 	});
+                MongoDatabase.getConnection().then(database => {
+                    const db = database.db('EOS');
+                    let query = { $or:[ { block_num : parseInt(req.body.text, 10) }, { block_id : text } ] };
+                    console.log(query);
+                    db.collection('blocks').findOne(query)
+                        .then(result => {
+                            console.log("result : " + result);
+                            cb(null, result);
+                        })
+                        .catch(err => {
+                            cb(null, null);
+                        })
+                    })
+                .catch(err => {
+                    cb(null, null);
+                })
 			},
 			transaction: (cb) =>{
-				global.eos.getTransaction({ id: text })
-	   			 	.then(result => {
-	   			 		cb(null, result);
-	   			 	})
-	   			 	.catch(err => {
-	   			 		cb(null, null);
-	   			 	});
+				MongoDatabase.getConnection().then(database => {
+                        const db = database.db('EOS');
+                        let query = { id: text };
+                        db.collection('transaction_traces').findOne(query)
+                            .then(result => {
+                                console.log(result);
+                                cb(null, result);
+                            })
+                            .catch(err => {
+                                cb(null, null);
+                            })
+                        })
+                    .catch(err => {
+                        cb(null, null);
+                    })
 			},
 			account: (cb) =>{
 				global.eos.getAccount({ account_name: text })
@@ -60,13 +77,21 @@ module.exports 	= (router, config, request, log, mongoMain, MARIA) => {
 	   			 	});
 			},
 			key: (cb) => {
-				global.eos.getKeyAccounts({ public_key: text })
-	   	 			.then(result => {
-	   	 				cb(null, result);
-	   	 			})
-	   	 			.catch(err => {
-	   	 				cb(null, null);
-	   	 			});
+				MongoDatabase.getConnection().then(database => {
+                        const db = database.db('EOS');
+                        let query = { pulbic_key: text };
+                        db.collection('pub_keys').findOne(query)
+                            .then(result => {
+                                console.log(result);
+                                cb(null, result);
+                            })
+                            .catch(err => {
+                                cb(null, null);
+                            })
+                        })
+                    .catch(err => {
+                        cb(null, null);
+                    })
 			},
 			contract: (cb) =>{
 				global.eos.getCode({ json: true, account_name: text })
@@ -192,18 +217,18 @@ module.exports 	= (router, config, request, log, mongoMain, MARIA) => {
 	* params - offset
 	*/
 	router.post('/api/v1/get_chart_ram', async (req, res) => {
-	   	let result;
-	   	let interval 	= 3; // mins. 
-	   	let dateFrom 	= (req.body.from === 0) ? 0 : +new Date(req.body.from);
-	   	let week 		= +new Date() - 8 * 7 * 24 * 3600000; 
-	   	let month 		= +new Date() - 32 * 7 * 24 * 3600000;
-	   	let match 		= (dateFrom === 0) ? {} : { date : { $gte: new Date(dateFrom) } };
+        let result;
+        let interval 	= 3; // mins. 
+        let dateFrom 	= (req.body.from === 0) ? 0 : +new Date(req.body.from);
+        let week 		= +new Date() - 8 * 7 * 24 * 3600000; 
+        let month 		= +new Date() - 32 * 7 * 24 * 3600000;
+        let match 		= (dateFrom === 0) ? {} : { date : { $gte: new Date(dateFrom) } };
 
-	   	if (dateFrom > month && dateFrom < week) {
-	   		interval = 60; // mins
-	   	} else if (dateFrom === 0){
-			interval = 180; // mins
-	   	}
+        if (dateFrom > month && dateFrom < week) {
+            interval = 60; // mins
+        } else if (dateFrom === 0){
+         interval = 180; // mins
+        }
 
 	   	let query = [
 	   		{ $match: match },

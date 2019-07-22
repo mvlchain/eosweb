@@ -42,7 +42,7 @@ export class AppComponent implements OnInit {
     text = text.replace(/ /g, '')
       this.http.post('/api/v1/search', { text: text })
                .subscribe((res :any) =>{
-                   if (res.block && !isNaN(+this.search)){
+                   if (res.block){
                       this.router.navigate(['/block', res.block.block_num]);
                    } else if (res.transaction){
                       this.router.navigate(['/transaction', res.transaction.id]);
