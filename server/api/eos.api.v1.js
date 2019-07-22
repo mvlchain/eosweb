@@ -4,7 +4,10 @@
 
 const async = require('async');
 const path = require('path');
+const Bluebird = require('bluebird');
 const customFunctions = require('./eos.api.v1.custom');
+const {MongoClient} = require('mongodb');
+const MongoDatabase = require('../database/db.mongo.connect');
 
 module.exports 	= (router, config, request, log, mongoMain, MARIA) => {
 

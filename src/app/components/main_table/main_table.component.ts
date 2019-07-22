@@ -39,12 +39,13 @@ export class MainTableComponent implements OnInit, OnDestroy{
   trxObj = {};
   spinner = false;
   offsetPageElems = 6;
+  tmpArray: Element[] = [];
 
   /*@ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;*/
 
   constructor(protected http: HttpClient,
-              @Inject(PLATFORM_ID) private platformId: Object, private socket : Socket, public mainService: MainService) {
+              @Inject(PLATFORM_ID) private platformId: Object, private socket : Socket, private MainService: MainService) {
   }
 
   getData() {
@@ -53,7 +54,7 @@ export class MainTableComponent implements OnInit, OnDestroy{
                   .subscribe(
                       (res: any) => {
                           this.mainData = res;
-                          let ELEMENT_DATA: Element[] = this.mainService.sortArray(this.mainData);
+                          let ELEMENT_DATA: Element[] = this.MainService.sortArray(this.mainData);
                           this.dataSource = new MatTableDataSource<Element>(ELEMENT_DATA);
 
                           let ELEMENT_DATA_TX: Element[] = this.createTransactionsArray(this.mainData);
@@ -75,24 +76,24 @@ export class MainTableComponent implements OnInit, OnDestroy{
       let displayBlocks = [];
 
       data.forEach(elem => {
-          if (elem.transactions && elem.transactions.length > 0){
-              elem.transactions.forEach(tr => {
-                  if (!this.trxObj[elem.block_num]){
-                      this.trxObj[elem.block_num] = [];
+          if (elem[0].block && elem[0].block.transactions.length > 0){
+              elem[0].block.transactions.forEach(tr => {
+                  if (!this.trxObj[elem[0].block_num]){
+                      this.trxObj[elem[0].block_num] = [];
                   }
                   let actions = [];
                   if (tr.trx && tr.trx.transaction && tr.trx.transaction.actions){
                       actions = tr.trx.transaction.actions.map(act => { 
                           act.block_num = tr.trx.id;
-                      });
-                      Array.prototype.push.apply(this.trxObj[elem.block_num], tr.trx.transaction.actions);
+                      });      
+                      Array.prototype.push.apply(this.trxObj[elem[0].block_num], tr.trx.transaction.actions);
                   }
               });
           }
       });
-
+      
       Object.keys(this.trxObj).forEach(key => {
-            let tempArray = _.uniq(this.trxObj[key], 'block_num');
+            let tempArray = _.uniq(this.trxObj[key], 'block_num'); //추가
             Array.prototype.push.apply(transactions, tempArray);
       });
       transactions.reverse();
@@ -106,20 +107,25 @@ export class MainTableComponent implements OnInit, OnDestroy{
           });
           return transactions.slice(0, this.offsetPageElems);
       }
-
+     
+      //console.log(transactions);
       
+
       return transactions;
   }
 
   ngOnInit() {
-      this.getData();
+      //this.getData();api로 받아옴
       this.socket.on('get_last_blocks', (data) => {
           this.mainData = data;
-          let ELEMENT_DATA: Element[] = this.mainService.sortArray(this.mainData);
-          this.dataSource = new MatTableDataSource<Element>(ELEMENT_DATA);
 
           let ELEMENT_DATA_TX: Element[] = this.createTransactionsArray(this.mainData);
           this.dataSourceTrx = new MatTableDataSource<Element>(ELEMENT_DATA_TX);
+          
+          let ELEMENT_DATA: Element[] = this.MainService.sortArray(this.mainData);
+          this.dataSource = new MatTableDataSource<Element>(ELEMENT_DATA);
+
+                   
 
       });
   }
@@ -128,24 +134,3 @@ export class MainTableComponent implements OnInit, OnDestroy{
     this.socket.removeAllListeners('get_last_blocks');
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

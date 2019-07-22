@@ -5,6 +5,7 @@ import * as shape from 'd3-shape';
 import { MainService } from '../../services/mainapp.service';
 import { forkJoin } from "rxjs/observable/forkJoin";
 import { environment } from '../../../environments/environment';
+import _ from 'lodash';
 
 @Component({
   selector: 'main-tcustomize-charts',
@@ -144,8 +145,8 @@ export class MainCustomizeChartsComponent implements OnInit{
   }
 
   countTPS(data){
-      let start = data[0].transactions.length;
-      let end = data[1].transactions.length;
+    let start = _.get(data[0], 'block.transactions.length', 0)
+    let end = _.get(data[1], 'block.transactions.length', 0)
       return start + end;
   }
 

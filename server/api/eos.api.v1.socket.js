@@ -72,6 +72,7 @@ module.exports = (io, mongoMain, metrics) => {
                           log.error(err);
                           return cb('No result');
                       }
+                      //console.log(result);
                       cb(null, result);
           });
         },
