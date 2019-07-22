@@ -6,6 +6,7 @@ import { isPlatformBrowser } from '@angular/common';
 import * as moment from 'moment';
 import { Socket } from 'ng-socket-io';
 import { MainService } from '../../services/mainapp.service';
+import *as _ from 'underscore';
 
 export interface Element {
   Name: string;
@@ -91,7 +92,8 @@ export class MainTableComponent implements OnInit, OnDestroy{
       });
 
       Object.keys(this.trxObj).forEach(key => {
-            Array.prototype.push.apply(transactions, this.trxObj[key]);
+            let tempArray = _.uniq(this.trxObj[key], 'block_num');
+            Array.prototype.push.apply(transactions, tempArray);
       });
       transactions.reverse();
 
