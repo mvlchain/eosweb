@@ -391,15 +391,22 @@ module.exports 	= (router, config, request, log, mongoMain, MARIA) => {
 	* router - get_actions
 	* params - account_name, position, offset
 	*/
-	router.get('/api/v1/get_actions/:account_name/:position/:offset', (req, res) => {
-	   	let formData = { json: true,
-			    account_name: req.params.account_name,
-	   	 		pos: req.params.position,
-	   	 		offset: (config.historyNewAPI) ? Math.abs(req.params.offset) : req.params.offset,
-	   	 		counter: 1
-		};
-	   	request.post({url:`${config.historyChain}/v1/history/get_actions`, json: formData}).pipe(res);
-	});
+    router.get( '/api/v1/get_actions/:account_name', async (req, res) => {           
+        try{
+            const database = await MongoDatabase.getConnection();
+            const db = database.db('EOS');
+            let query = { 'act.authorization.actor' : req.params.account_name};
+            try{
+                let blocks = await db.collection('action_traces').find(query).toArray();
+                res.json(blocks);
+            } catch (e){
+                console.log(e);
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+);
 
 	/*
 	* router - get_actions by action name

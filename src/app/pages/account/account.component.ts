@@ -89,25 +89,25 @@ export class AccountPageComponent implements OnInit, OnDestroy{
 
   getActions(accountName, pos){
       this.spinnerActions = true;
-      this.http.get(`/api/v1/get_actions/${accountName}/-${pos}/-${this.elementsLimit}`)
+      this.http.get(`/api/v1/get_actions/${accountName}`)
            .subscribe((res: any) => {
-                          this.actionsNotSorted = res.actions;
-                          if(res.actions[0] && !res.actions[0].action_trace){
-                            res.actions = this.createActionsArr(res.actions);
-                            this.actionsTotal = res.actionsTotal;
-                          } else {
-                            res.actions.reverse();
+                            console.log(res);
+                          this.actionsNotSorted = res;
+                          if(res[0] && !res[0].action_trace){
+                            this.actionsTotal = res.length;
                           }
-                          res.actions = this.sortArrayFunctions(res.actions);
-                          Array.prototype.push.apply(this.actionsArray, res.actions);
+                          res.reverse();
+                          
+                          res = this.sortArrayFunctions(res);
+                          Array.prototype.push.apply(this.actionsArray, res);
 
                           this.actions = this.actionsArray;
                           let ELEMENT_DATA: Element[] = this.actionsArray;
                           this.dataSource = new MatTableDataSource<Element>(ELEMENT_DATA);
 
                           this.dataSource.filterPredicate = function(data, filter: string): boolean {
-                                      return data.action_trace.act.name.toLowerCase().includes(filter) || 
-                                             data.action_trace.act.account.toLowerCase().includes(filter);
+                                      return data.act.name.toLowerCase().includes(filter) || 
+                                             data.act.account.toLowerCase().includes(filter);
                           };
 
                           this.spinnerActions = false;
@@ -167,7 +167,7 @@ export class AccountPageComponent implements OnInit, OnDestroy{
        let uniqieString = [];
        let result = [];
        data.forEach(elem => {
-           let unique = elem.action_trace.act.hex_data + elem.action_trace.trx_id;
+           let unique = elem.trx_id;
            if (uniqieString.indexOf(unique) === -1){
                result.push(elem);
                uniqieString.push(unique);
