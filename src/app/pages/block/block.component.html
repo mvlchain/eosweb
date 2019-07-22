@@ -1,179 +1,179 @@
 <div class="container">
 
-<div class="spinner-container" *ngIf="spinner">
-    <mat-spinner class="spinner-color"></mat-spinner>
-</div>
-
-	<h1 class="market-header">Block  No. {{ mainData?.block_num }} 
-		<span class="arrows-prev-next">
-			<a routerLink="/block/{{ mainData?.block_num - 1 }}" class="color-green"> <i class="far fa-long-arrow-left"></i> Prev</a>
-			<a routerLink="/block/{{ mainData?.block_num + 1 }}" class="color-green"> Next <i class="far fa-long-arrow-right"></i></a>
-		</span>
-	</h1>
-
-	<div class="block-info">
-
-			<div class="col-sm-12 block-info-line">
-				<div class="col-sm-3">
-					<strong class="block-info-header">Producer:</strong>
-				</div>
-				<div class="col-sm-9">
-					<small><a routerLink="/account/{{mainData?.producer}}" class="color-green">{{ mainData?.producer }}</a></small>
-				</div>
-			</div>
-
-			<div class="col-sm-12 block-info-line">
-				<div class="col-sm-3">
-					<strong class="block-info-header">Id:</strong>
-				</div>
-				<div class="col-sm-9">
-					<small class="color-grey tx-mobile-hash">{{ mainData?.id}}</small>
-				</div>
-			</div>
-
-			<div class="col-sm-12 block-info-line">
-				<div class="col-sm-3">
-					<strong class="block-info-header">Previous:</strong>
-				</div>
-				<div class="col-sm-9">
-					<small>
-						<a routerLink="/block/{{mainData?.previous}}" class="color-green tx-mobile-hash">{{ mainData?.previous }}
-						</a>
-					</small>
-				</div>
-			</div>
-			
-			<div class="col-sm-12 block-info-line">
-				<div class="col-sm-3">
-					<strong class="block-info-header">Confirmations:</strong>
-				</div>
-				<div class="col-sm-9">
-					<small class="color-grey">{{ mainData?.confirmed  }}</small>
-				</div>
-			</div>	
-
-			<div class="col-sm-12 block-info-line">
-				<div class="col-sm-3">
-					<strong class="block-info-header">Action Mroot:</strong>
-				</div>
-				<div class="col-sm-9">
-					<small class="tx-mobile-hash">{{ mainData?.action_mroot  }}</small>
-				</div>
-			</div>
-
-			<div class="col-sm-12 block-info-line">
-				<div class="col-sm-3">
-					<strong class="block-info-header">Transaction Mroot:</strong>
-				</div>
-				<div class="col-sm-9">
-					<small class="tx-mobile-hash">{{ mainData?.transaction_mroot  }}</small>
-				</div>
-			</div>
-
-			<div class="col-sm-12 block-info-line">
-				<div class="col-sm-3">
-					<strong class="block-info-header">Time:</strong>
-				</div>
-				<div class="col-sm-9">
-					<small class="color-grey">{{ time }}</small>
-				</div>
-			</div>
-			
-			<div class="col-sm-12 block-info-line">
-				<div class="col-sm-3">
-					<strong class="block-info-header">Transactions:</strong>
-				</div>
-				<div class="col-sm-9">
-					<small class="color-grey">{{ mainData?.transactions?.length }}</small>
-				</div>
-			</div>
-
-			<div class="col-sm-12 block-info-line" *ngIf="mainData?.transactions?.length < 1000">
-				<mat-accordion>
-				  <mat-expansion-panel>
-				    <mat-expansion-panel-header>
-				      <mat-panel-title>
-				        Blockchain Raw Data:
-				      </mat-panel-title>
-				    </mat-expansion-panel-header>
-				    <ngx-json-viewer [json]="mainData"></ngx-json-viewer>
-				  </mat-expansion-panel>
-				</mat-accordion>
-			</div>
-
-			<div class="col-sm-12">
-					<div class="example-container mat-elevation-z8 main-table block-trx-table" *ngIf="trxArr?.length">
-					
-					  <mat-table #table [dataSource]="dataSource">
-						
-						<!-- Name Column -->
-					    <ng-container matColumnDef="expiration">
-					      <mat-header-cell *matHeaderCellDef style="flex:1.2"> Expiration</mat-header-cell>
-					      <mat-cell *matCellDef="let element" class="change-container"> 
-					            {{ moment(element?.expiration).format('MMMM Do YYYY, h:mm:ss a') }}
-					      </mat-cell>
-					    </ng-container>	
-
-					    <ng-container matColumnDef="cpu">
-					      <mat-header-cell *matHeaderCellDef> CPU </mat-header-cell>
-					      <mat-cell *matCellDef="let element; let i = index" style="flex:0.5">
-					          <strong>{{ element?.cpu }}</strong>
-					      </mat-cell>
-					    </ng-container>
-					    
-					     <ng-container matColumnDef="net">
-					      <mat-header-cell *matHeaderCellDef> NET </mat-header-cell>
-					      <mat-cell *matCellDef="let element; let i = index" class="text-center" style="flex:0.5">
-					          <strong>{{ element?.net }}</strong>
-					      </mat-cell>
-					    </ng-container>
-
-					    <!-- Name Column -->
-					    <ng-container matColumnDef="id" style="flex:2">
-					      <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
-					      <mat-cell *matCellDef="let element" class="marketcap-container">
-					          <a routerLink="/transaction/{{element?.hash}}" class="color-green tx-hash">{{ element?.hash }}</a>
-					       </mat-cell>
-					    </ng-container>
-					    
-					    <ng-container matColumnDef="status">
-					      <mat-header-cell *matHeaderCellDef> Status</mat-header-cell>
-					      <mat-cell *matCellDef="let element"> 
-					             <strong>{{element?.status}}</strong>
-					      </mat-cell>
-					    </ng-container>
-					   	
-
-					    <!-- Weight Column -->
-					    <ng-container matColumnDef="actions">
-					      <mat-header-cell *matHeaderCellDef class="actions-list-container" style="flex: 4 !important;"> Actions </mat-header-cell>
-					      <mat-cell *matCellDef="let element"> 
-					          	<!--{{element?.actions}}-->
-								<div *ngFor="let action of element?.actions" class="actions-list-container" style="width: 520px;">
-								  
-								  <div class="actions-main-container" style="padding-left: 0px;">
-									<div class="actions-list">
-										<strong>{{ action?.name }}</strong>
-									</div>
-									<div class="actions-list">
-										<action-viewer [data]="action" [length]="50" class="color-light-grey"></action-viewer>
-									</div>
-								  </div>
-
-								</div>
-					      </mat-cell>
-					    </ng-container>
-
-					    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-					    	<mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-					  	</mat-table>
-					
-					  	<mat-paginator #paginator
-					  	               [pageSize]="50"
-					  	               [pageSizeOptions]="[20, 50, 100]"
-					  	               showFirstLastButtons>
-					  	</mat-paginator>
-					</div>
-			</div>
-	</div>
-</div>
+    <div class="spinner-container" *ngIf="spinner">
+        <mat-spinner class="spinner-color"></mat-spinner>
+    </div>
+    
+        <h1 class="market-header">Block  No. {{ mainData?.block_num }} 
+            <span class="arrows-prev-next">
+                <a routerLink="/block/{{ mainData?.block_num - 1 }}" class="color-green"> <i class="far fa-long-arrow-left"></i> Prev</a>
+                <a routerLink="/block/{{ mainData?.block_num + 1 }}" class="color-green"> Next <i class="far fa-long-arrow-right"></i></a>
+            </span>
+        </h1>
+    
+        <div class="block-info">
+    
+                <div class="col-sm-12 block-info-line">
+                    <div class="col-sm-3">
+                        <strong class="block-info-header">Producer:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        <small><a routerLink="/account/{{mainData?.block.producer}}" class="color-green">{{ mainData?.block?.producer }}</a></small>
+                    </div>
+                </div>
+    
+                <div class="col-sm-12 block-info-line">
+                    <div class="col-sm-3">
+                        <strong class="block-info-header">Id:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        <small class="color-grey tx-mobile-hash">{{ mainData?.block_id}}</small>
+                    </div>
+                </div>
+    
+                <div class="col-sm-12 block-info-line">
+                    <div class="col-sm-3">
+                        <strong class="block-info-header">Previous:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        <small>
+                            <a routerLink="/block/{{mainData?.block_num - 1}}" class="color-green tx-mobile-hash">{{ mainData?.block?.previous }}
+                            </a>
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="col-sm-12 block-info-line">
+                    <div class="col-sm-3">
+                        <strong class="block-info-header">Confirmations:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        <small class="color-grey">{{ mainData?.block?.confirmed  }}</small>
+                    </div>
+                </div>	
+    
+                <div class="col-sm-12 block-info-line">
+                    <div class="col-sm-3">
+                        <strong class="block-info-header">Action Mroot:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        <small class="tx-mobile-hash">{{ mainData?.block?.action_mroot  }}</small>
+                    </div>
+                </div>
+    
+                <div class="col-sm-12 block-info-line">
+                    <div class="col-sm-3">
+                        <strong class="block-info-header">Transaction Mroot:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        <small class="tx-mobile-hash">{{ mainData?.block?.transaction_mroot  }}</small>
+                    </div>
+                </div>
+    
+                <div class="col-sm-12 block-info-line">
+                    <div class="col-sm-3">
+                        <strong class="block-info-header">Time:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        <small class="color-grey">{{ time }}</small>
+                    </div>
+                </div>
+                
+                <div class="col-sm-12 block-info-line">
+                    <div class="col-sm-3">
+                        <strong class="block-info-header">Transactions:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        <small class="color-grey">{{ mainData?.block?.transactions?.length }}</small>
+                    </div>
+                </div>
+    
+                <div class="col-sm-12 block-info-line" *ngIf="mainData?.transactions?.length < 1000">
+                    <mat-accordion>
+                      <mat-expansion-panel>
+                        <mat-expansion-panel-header>
+                          <mat-panel-title>
+                            Blockchain Raw Data:
+                          </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <ngx-json-viewer [json]="mainData"></ngx-json-viewer>
+                      </mat-expansion-panel>
+                    </mat-accordion>
+                </div>
+    
+                <div class="col-sm-12">
+                        <div class="example-container mat-elevation-z8 main-table block-trx-table" *ngIf="trxArr?.length">
+                        
+                          <mat-table #table [dataSource]="dataSource">
+                            
+                            <!-- Name Column -->
+                            <ng-container matColumnDef="expiration">
+                              <mat-header-cell *matHeaderCellDef style="flex:1.2"> Expiration</mat-header-cell>
+                              <mat-cell *matCellDef="let element" class="change-container"> 
+                                    {{ moment(element?.expiration).format('MMMM Do YYYY, h:mm:ss a') }}
+                              </mat-cell>
+                            </ng-container>	
+    
+                            <ng-container matColumnDef="cpu">
+                              <mat-header-cell *matHeaderCellDef> CPU </mat-header-cell>
+                              <mat-cell *matCellDef="let element; let i = index" style="flex:0.5">
+                                  <strong>{{ element?.cpu }}</strong>
+                              </mat-cell>
+                            </ng-container>
+                            
+                             <ng-container matColumnDef="net">
+                              <mat-header-cell *matHeaderCellDef> NET </mat-header-cell>
+                              <mat-cell *matCellDef="let element; let i = index" class="text-center" style="flex:0.5">
+                                  <strong>{{ element?.net }}</strong>
+                              </mat-cell>
+                            </ng-container>
+    
+                            <!-- Name Column -->
+                            <ng-container matColumnDef="id" style="flex:2">
+                              <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
+                              <mat-cell *matCellDef="let element" class="marketcap-container">
+                                  <a routerLink="/transaction/{{element?.hash}}" class="color-green tx-hash">{{ element?.hash }}</a>
+                               </mat-cell>
+                            </ng-container>
+                            
+                            <ng-container matColumnDef="status">
+                              <mat-header-cell *matHeaderCellDef> Status</mat-header-cell>
+                              <mat-cell *matCellDef="let element"> 
+                                     <strong>{{element?.status}}</strong>
+                              </mat-cell>
+                            </ng-container>
+                               
+    
+                            <!-- Weight Column -->
+                            <ng-container matColumnDef="actions">
+                              <mat-header-cell *matHeaderCellDef class="actions-list-container" style="flex: 4 !important;"> Actions </mat-header-cell>
+                              <mat-cell *matCellDef="let element"> 
+                                      <!--{{element?.actions}}-->
+                                    <div *ngFor="let action of element?.actions" class="actions-list-container" style="width: 520px;">
+                                      
+                                      <div class="actions-main-container" style="padding-left: 0px;">
+                                        <div class="actions-list">
+                                            <strong>{{ action?.name }}</strong>
+                                        </div>
+                                        <div class="actions-list">
+                                            <action-viewer [data]="action" [length]="50" class="color-light-grey"></action-viewer>
+                                        </div>
+                                      </div>
+    
+                                    </div>
+                              </mat-cell>
+                            </ng-container>
+    
+                            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                              </mat-table>
+                        
+                              <mat-paginator #paginator
+                                             [pageSize]="50"
+                                             [pageSizeOptions]="[20, 50, 100]"
+                                             showFirstLastButtons>
+                              </mat-paginator>
+                        </div>
+                </div>
+        </div>
+    </div>

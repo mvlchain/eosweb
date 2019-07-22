@@ -234,16 +234,25 @@ module.exports 	= (router, config, request, log, mongoMain, MARIA) => {
 	* router - get_block
 	* params - block_num_or_id
 	*/
-	router.get('/api/v1/get_block/:block_num_or_id', (req, res) => {
-	   	 global.eos.getBlock({ block_num_or_id: req.params.block_num_or_id })
-	   	 	.then(result => {
-	   	 		res.json(result);
-	   	 	})
-	   	 	.catch(err => {
-	   	 		log.error(err);
-	   	 		res.status(501).end();
-	   	 	});
-	});
+    router.get('/api/v1/get_block/:block_num_or_id', async (req, res) => { //modify        
+        try {
+            const database = await MongoDatabase.getConnection();
+            const db = database.db('EOS');
+            let query = {
+                block_num: parseInt(req.params.block_num_or_id, 10)
+            }
+            try {
+                let block = await db
+                    .collection('blocks')
+                    .findOne(query);
+                res.json(block);
+            } catch (e) {
+                console.log(err);
+            }
+        } catch (e) {
+            console.log(err);
+        }
+    });
 
     /*
 	* router - get_last_blocks

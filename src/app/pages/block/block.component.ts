@@ -34,12 +34,10 @@ export class BlockPageComponent implements OnInit, OnDestroy{
   				 .subscribe(
                       (res: any) => {
                           this.mainData = res;
-                          this.time = this.moment(this.mainData.timestamp).format('MMMM Do YYYY, h:mm:ss a');
-                          if (this.mainData.transactions && this.mainData.transactions.length){
-                              this.trxArr = this.createTransactionsArray(this.mainData.transactions);
-                              
+                          this.time = this.moment(this.mainData.block.timestamp).format('MMMM Do YYYY, h:mm:ss a');
+                          if (this.mainData.block.transactions && this.mainData.block.transactions.length){
+                              this.trxArr = this.createTransactionsArray(this.mainData.block.transactions);
                               let ELEMENT_DATA: Element[] = this.trxArr;
-                              console.log(ELEMENT_DATA.length)
                               this.dataSource = new MatTableDataSource<Element>(ELEMENT_DATA);
                               setTimeout(() => this.dataSource.paginator = this.paginator);
                               //console.log(this.trxArr);                              
@@ -89,6 +87,7 @@ export class BlockPageComponent implements OnInit, OnDestroy{
   ngOnInit() {
     this.block = this.route.params.subscribe(params => {
        this.blockId = params['id'];
+       this.dataSource = null;
        this.getBlockData(this.blockId);
     });
   }
