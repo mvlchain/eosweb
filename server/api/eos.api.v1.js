@@ -6,7 +6,6 @@ const async = require('async');
 const path = require('path');
 const Bluebird = require('bluebird');
 const customFunctions = require('./eos.api.v1.custom');
-const {MongoClient} = require('mongodb');
 const MongoDatabase = require('../database/db.mongo.connect');
 
 module.exports 	= (router, config, request, log, mongoMain, MARIA) => {
@@ -424,9 +423,20 @@ module.exports 	= (router, config, request, log, mongoMain, MARIA) => {
 	* router - get_transaction
 	* params - transaction_id_type
 	*/
-	router.get('/api/v1/get_transaction/:trx_id', (req, res) => {
-		let data = { id: req.params.trx_id };
-	   	request.post({url:`${config.historyChain}/v1/history/get_transaction`, json: data }).pipe(res);
+	router.get('/api/v1/get_transaction/:trx_id', async (req, res) => {
+		try{
+            const database = await MongoDatabase.getConnection();
+            const db = database.db("EOS");
+            let query = { id : req.params.trx_id };
+            try {
+                const tx = await db.collection("transaction_traces").findOne(query);
+                res.json(tx);
+            } catch (e){
+                console.log("dont exeit trx");
+            }
+        } catch (e){
+            console.log("dont connect mongoDB");
+        }
 	});
 
     /*
