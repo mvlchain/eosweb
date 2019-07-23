@@ -91,10 +91,9 @@ export class AccountPageComponent implements OnInit, OnDestroy{
       this.spinnerActions = true;
       this.http.get(`/api/v1/get_actions/${accountName}`)
            .subscribe((res: any) => {
-                            console.log(res);
                           this.actionsNotSorted = res;
-                          if(res[0] && !res[0].action_trace){
-                            this.actionsTotal = res.length;
+                          if(res[0] && res[0].action_traces){
+                            this.actionsTotal = res.length;                            
                           }
                           res.reverse();
                           
@@ -105,10 +104,10 @@ export class AccountPageComponent implements OnInit, OnDestroy{
                           let ELEMENT_DATA: Element[] = this.actionsArray;
                           this.dataSource = new MatTableDataSource<Element>(ELEMENT_DATA);
 
-                          this.dataSource.filterPredicate = function(data, filter: string): boolean {
-                                      return data.act.name.toLowerCase().includes(filter) || 
-                                             data.act.account.toLowerCase().includes(filter);
-                          };
+                        //   this.dataSource.filterPredicate = function(data, filter: string): boolean {
+                        //               return data.action_traces[0].act.name.toLowerCase().includes(filter) || 
+                        //                      data.action_traces[0].act.account.toLowerCase().includes(filter);
+                        //   };
 
                           this.spinnerActions = false;
                       },
@@ -167,7 +166,7 @@ export class AccountPageComponent implements OnInit, OnDestroy{
        let uniqieString = [];
        let result = [];
        data.forEach(elem => {
-           let unique = elem.trx_id;
+           let unique = elem.id;
            if (uniqieString.indexOf(unique) === -1){
                result.push(elem);
                uniqieString.push(unique);

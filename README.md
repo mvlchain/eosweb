@@ -1,4 +1,4 @@
-# EOSweb.net - vote for us [https://eosweb.net/vote](https://eosweb.net/vote)
+# MVLweb.net
 
 [Angular CLI](https://github.com/angular/angular-cli) version 7.1.4
 

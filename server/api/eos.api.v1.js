@@ -267,9 +267,7 @@ module.exports 	= (router, config, request, log, mongoMain, MARIA) => {
                 block_num: parseInt(req.params.block_num_or_id, 10)
             }
             try {
-                let block = await db
-                    .collection('blocks')
-                    .findOne(query);
+                let block = await db.collection('blocks').findOne(query);
                 res.json(block);
             } catch (e) {
                 console.log(err);
@@ -416,13 +414,13 @@ module.exports 	= (router, config, request, log, mongoMain, MARIA) => {
 	* router - get_actions
 	* params - account_name, position, offset
 	*/
-    router.get( '/api/v1/get_actions/:account_name', async (req, res) => {           
+    router.get( '/api/v1/get_actions/:account_name', async (req, res) => {
         try{
             const database = await MongoDatabase.getConnection();
             const db = database.db('EOS');
-            let query = { 'act.authorization.actor' : req.params.account_name};
+            let query = { 'action_traces.act.authorization.actor' : req.params.account_name};
             try{
-                let blocks = await db.collection('action_traces').find(query).toArray();
+                let blocks = await db.collection('transaction_traces').find(query).toArray();
                 res.json(blocks);
             } catch (e){
                 console.log(e);
@@ -465,6 +463,7 @@ module.exports 	= (router, config, request, log, mongoMain, MARIA) => {
 	* params - transaction_id_type
 	*/
 	router.get('/api/v1/get_transaction/:trx_id', async (req, res) => {
+        //
 		try{
             const database = await MongoDatabase.getConnection();
             const db = database.db("EOS");
