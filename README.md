@@ -2,6 +2,9 @@
 
 [Angular CLI](https://github.com/angular/angular-cli) version 7.1.4
 
+## add install module rxjs
+  npm install rxjs-compat@6.3.3 --s
+
 ## manual installation 
 	- node.js v.10^ https://nodejs.org/
 	- npm install -g angular-cli@7.1.4
